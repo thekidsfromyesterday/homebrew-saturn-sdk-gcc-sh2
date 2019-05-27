@@ -12,7 +12,7 @@ class SaturnSdkGccSh2 < Formula
   head "https://github.com/thekidsfromyesterday/Saturn-SDK-GCC-SH2.git"
 
   depends_on "coreutils" => :build # for realpath
-  depends_on "gcc@7" => :build
+  depends_on "gcc@9" => :build
 
   # Versions
   ENV['BINUTILSVER'] = "2.31"
