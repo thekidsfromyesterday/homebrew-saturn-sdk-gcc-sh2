@@ -9,19 +9,18 @@ class SaturnSdkGccSh2 < Formula
 
   desc "GCC cross-compiler for Sega Saturn"
   homepage "https://segaxtreme.net/threads/another-saturn-sdk.23781/"
-  head "https://github.com/SaturnSDK/Saturn-SDK-GCC-SH2.git"
+  head "https://github.com/thekidsfromyesterday/Saturn-SDK-GCC-SH2.git"
 
   depends_on "coreutils" => :build # for realpath
-  depends_on "gcc@6" => :build
+  depends_on "gcc@7" => :build
 
   # Versions
   ENV['BINUTILSVER'] = "2.31"
-  ENV['GCCVER'] = "7.1.0"
-  ENV['NEWLIBVER'] = "2.5.0"
+  ENV['GCCVER'] = "9.1.0"
+  ENV['NEWLIBVER'] = "3.0.0"
   ENV['MPCVER'] = "1.1.0"
   ENV['MPFRVER'] = "4.0.2"
   ENV['GMPVER'] = "6.1.2"
-  ENV['ISLVER'] = "0.18"
 
   # All of these are normally downloaded by the download.sh script;
   # they're specified here as :nounzip resources so we can model and download them instead.
@@ -31,8 +30,8 @@ class SaturnSdkGccSh2 < Formula
   end
 
   resource "gcc" do
-    url "https://ftp.gnu.org/gnu/gcc/gcc-#{ENV['GCCVER']}/gcc-#{ENV['GCCVER']}.tar.bz2", :using => :nounzip
-    sha256 "8a8136c235f64c6fef69cac0d73a46a1a09bb250776a050aec8f9fc880bebc17"
+    url "https://ftp.gnu.org/gnu/gcc/gcc-#{ENV['GCCVER']}/gcc-#{ENV['GCCVER']}.tar.xz", :using => :nounzip
+    sha256 "79a66834e96a6050d8fe78db2c3b32fb285b230b855d0a66288235bc04b327a0"
   end
 
   resource "gmp" do
@@ -55,26 +54,12 @@ class SaturnSdkGccSh2 < Formula
     sha256 "c05e3f02d09e0e9019384cdd58e0f19c64e6db1fd6f5ecf77b4b1c61ca253acc"
   end
 
-  resource "isl" do
-    url "ftp://gcc.gnu.org/pub/gcc/infrastructure/isl-#{ENV["ISLVER"]}.tar.bz2"
-    sha256 "6b8b0fd7f81d0a957beb3679c81bbb34ccc7568d5682844d8924424a0dadcb1b"
-  end
-
   # ld: internal error: atom not found in symbolIndex(__ZN3vecINSt3__14pairIjPKcEE7va_heap6vl_ptrE7reserveEjb) for architecture x86_64
   fails_with :clang
 
   def install
-		paths = {}
-
     resources.each do |r|
       (buildpath/"download").install r
-
-			if r.name === 'isl'
-				r.stage do |stage|
-					paths[r.name] = Dir.pwd
-					stage.staging.retain!
-				end
-			end
     end
 
     # At higher levels of parallelization, make race bugs have been observed
@@ -95,12 +80,10 @@ class SaturnSdkGccSh2 < Formula
     ENV["SKIP_DOWNLOAD"] = "1"
     ENV["DOWNLOADDIR"] = "#{buildpath}/download"
     ENV["PROGRAM_PREFIX"] = "saturn-sh2-"
-    ENV["HOMEBREW_CC"] = "gcc-6"
-    ENV["CC"] = "gcc-6"
 
     ENV["BINUTILS_CFLAGS"] = "-s"
-    ENV["GCC_BOOTSTRAP_FLAGS"] = "--with-cpu=m2 --with-isl=#{paths['isl']}/isl-#{ENV['ISLVER']}"
-    ENV["GCC_FINAL_FLAGS"] = "--with-cpu=m2 --with-sysroot=#{ENV['SYSROOTDIR']} --with-isl=#{paths['isl']}/isl-#{ENV['ISLVER']}"
+    ENV["GCC_BOOTSTRAP_FLAGS"] = "--with-cpu=m2"
+    ENV["GCC_FINAL_FLAGS"] = "--with-cpu=m2 --with-sysroot=#{ENV['SYSROOTDIR']}"
 
     system "./build.sh"
 
