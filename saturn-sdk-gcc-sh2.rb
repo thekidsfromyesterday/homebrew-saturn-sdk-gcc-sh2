@@ -46,7 +46,7 @@ class SaturnSdkGccSh2 < Formula
 
   resource "newlib" do
     url "ftp://sourceware.org/pub/newlib/newlib-#{ENV['NEWLIBVER']}.tar.gz", :using => :nounzip
-    sha256 "5b76a9b97c9464209772ed25ce55181a7bb144a66e5669aaec945aa64da3189b"
+    sha256 "c8566335ee74e5fcaeb8595b4ebd0400c4b043d6acb3263ecb1314f8f5501332"
   end
 
   resource "mpfr" do
