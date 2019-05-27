@@ -7,6 +7,18 @@ class SaturnSdkGccSh2 < Formula
     `uname -r`.chomp
   end
 
+  def mac?
+   (/darwin/ =~ RUBY_PLATFORM) != nil
+  end
+
+  def target
+    if mac?
+      "#{arch}-apple-darwin#{osmajor}"
+    else
+      "#{arch}-pc-linux-gnu"
+    end
+  end
+
   desc "GCC cross-compiler for Sega Saturn"
   homepage "https://segaxtreme.net/threads/another-saturn-sdk.23781/"
   head "https://github.com/thekidsfromyesterday/Saturn-SDK-GCC-SH2.git"
@@ -68,8 +80,8 @@ class SaturnSdkGccSh2 < Formula
     ENV["BUILDDIR"] = "#{buildpath}/build"
     ENV["TARGETMACH"] = "sh-elf"
     ENV["OBJFORMAT"] = "ELF"
-    ENV["BUILDMACH"] = "x86_64-pc-linux-gnu"
-    ENV["HOSTMACH"] = "x86_64-pc-linux-gnu"
+    ENV["BUILDMACH"] = target
+    ENV["HOSTMACH"] = target
     ENV["INSTALLDIR"] = prefix.to_s
     # Ensures the temporary cross-compiler doesn't get moved to
     # outside a sandbox-writeable directory
